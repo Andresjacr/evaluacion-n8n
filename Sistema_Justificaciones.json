@@ -1,0 +1,874 @@
+{
+  "name": "Sistema_Justificaciones",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "✅ This AI News agent is ready to use. Chat with it! \n✨ We gave you free OpenAI credits\n💡 Learn [how to build](https://n8n.io/workflows/6270-build-your-first-ai-agent/) your own agent  ",
+        "height": 80,
+        "width": 448,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -176
+      ],
+      "id": "052068ba-ea50-4521-9946-63ded13b23b0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d2e1e6c3-c048-43d6-b1d9-377fc1e5a561",
+              "name": "nombre",
+              "value": "={{ $json.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "0333f2a4-2edd-45de-9e9f-5b04fa1c44fd",
+              "name": "correo",
+              "value": "={{ $json.correo }}",
+              "type": "string"
+            },
+            {
+              "id": "a238acb9-c2a3-4ec7-a7e4-2df763c8c1c8",
+              "name": "motivo",
+              "value": "={{ $json.motivo }}",
+              "type": "string"
+            },
+            {
+              "id": "437ee2af-1978-46e3-ae95-acfaa6bd0014",
+              "name": "descripcion",
+              "value": "={{ $json.descripcion }}",
+              "type": "string"
+            },
+            {
+              "id": "0435a091-5f5e-440b-b6c9-cfaa38bfddb1",
+              "name": "documento",
+              "value": "documento_",
+              "type": "binary"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1264,
+        176
+      ],
+      "id": "ebcd7889-ebb7-4ee2-a3b0-21f8bfd1ebf0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Analiza la siguiente justificación:\n\nMotivo: {{$json[\"motivo\"]}}\nDescripción: {{$json[\"descripcion\"]}}\n\nContenido del documento:\n{{$json[\"texto_documento\"]}}\n\nResponde en JSON con:\n{\n  \"clasificacion\": \"VALIDA | INVALIDA | DUDOSA\",\n  \"confianza\": \"ALTA | MEDIA | BAJA\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        160
+      ],
+      "id": "2f4e3598-4624-455b-b081-02d9015727f5",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NrGqwlIxgP1tQiEd",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "90d8bf15-4b43-47bf-a2ef-f1564565b40c",
+              "name": "clasificacion",
+              "value": "={{ JSON.parse($json[\"output\"][0][\"content\"][0][\"text\"]).clasificacion }}",
+              "type": "string"
+            },
+            {
+              "id": "64f97379-1a9f-4c0b-b3e9-c8ac5c00fe90",
+              "name": "confianza",
+              "value": "={{ JSON.parse($json[\"output\"][0][\"content\"][0][\"text\"]).confianza }}",
+              "type": "string"
+            },
+            {
+              "id": "0817fd9a-f89a-469f-9bb3-df771a33ce8d",
+              "name": "nombre",
+              "value": "={{$node[\"Edit Fields\"].json[\"nombre\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "bd8268cc-8f09-4c16-9562-4aab99651b83",
+              "name": "correo",
+              "value": "={{$node[\"Edit Fields\"].json[\"correo\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "1e9857a5-5e08-46ed-8405-d29977ec6587",
+              "name": "descripcion",
+              "value": "={{$node[\"Edit Fields\"].json[\"descripcion\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "48fc68a8-bd84-4496-97b0-304117219b80",
+              "name": "motivo",
+              "value": "={{ $('Edit Fields').item.json.motivo }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        176
+      ],
+      "id": "b11f3fe2-ac3d-48c9-ba99-548475281863",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9abdb9a2-a7f6-49b1-bf06-90f796da4238",
+              "leftValue": "={{$json[\"clasificacion\"]}}",
+              "rightValue": "INVALIDA",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        336
+      ],
+      "id": "092d8e24-cdfa-45b4-82a4-7854d39b5062",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1qfVgMVn2HzYOkihKItjESG8nXGdIyEaKaCk90LvdN_E",
+          "mode": "list",
+          "cachedResultName": "Justificaiones Proyect",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qfVgMVn2HzYOkihKItjESG8nXGdIyEaKaCk90LvdN_E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qfVgMVn2HzYOkihKItjESG8nXGdIyEaKaCk90LvdN_E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{$json[\"nombre\"]}}",
+            "correo": "={{$json[\"correo\"]}}",
+            "motivo": "={{$json[\"motivo\"]}}",
+            "descripcion": "={{$json[\"descripcion\"]}}",
+            "clasificacion": "={{$json[\"clasificacion\"]}}",
+            "confianza": "={{$json[\"confianza\"]}}",
+            "estado": "={{ $json['estado'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "correo",
+              "displayName": "correo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "descripcion",
+              "displayName": "descripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "clasificacion",
+              "displayName": "clasificacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "confianza",
+              "displayName": "confianza",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        224
+      ],
+      "id": "6e7e7309-bbd2-45cd-821e-44b02ae652ec",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "C10N0QyqERODNjVf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce768e63-1a2b-47c7-95af-7ffeeca1842b",
+              "leftValue": "={{$json[\"clasificacion\"]}}",
+              "rightValue": "VALIDA",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        176
+      ],
+      "id": "6881bc2e-121b-478f-9e27-d17327a7cd72",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5ef5eeb-7fa6-4a16-8da9-f632b7daff0b",
+              "name": "estado",
+              "value": "aprobado ",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        96
+      ],
+      "id": "a792dce9-1e66-4abf-bcd5-b4b0df3417d7",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e6d3c34c-8447-44ed-8d5b-42e2cab33acc",
+              "name": "estado",
+              "value": "rechazado",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        256
+      ],
+      "id": "c728cb2d-0d8e-4323-ac2d-2d3d188216ed",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "49161db0-3386-4005-942b-f6335163594f",
+              "name": "estado",
+              "value": "En revicion",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        400
+      ],
+      "id": "ac0b6594-9986-412e-8616-8d7693aae84b",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "formTitle": "Sistema de sustificaciones ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "correo",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "motivo",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "descripcion",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "documento ",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -1408,
+        176
+      ],
+      "id": "1f99e2a5-eb6f-435e-831c-fad5cc552ec7",
+      "name": "On form submission",
+      "webhookId": "0a3c40be-0b59-4034-9315-e011cbc9a27c"
+    },
+    {
+      "parameters": {
+        "chatId": "8325841057",
+        "text": "=Solicitud procesada  Estado: {{$json[\"estado\"]}} Clasificación: {{$json[\"clasificacion\"]}} Motivo: {{$json[\"motivo\"]}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        224
+      ],
+      "id": "dfe620db-36a2-491d-9014-705223633523",
+      "name": "Send a text message",
+      "webhookId": "c38ea903-d886-425c-8e86-c3c3bc0cad65",
+      "credentials": {
+        "telegramApi": {
+          "id": "V0RkbVYUR5yye6PI",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "tienes que mirar el  google sheets y validar si es repetido o no, de no ser repetido continua, \nsi se repite manda un mensaje a telegram diciendo que esta repetido "
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -544,
+        64
+      ],
+      "id": "b6027df6-4216-4920-b28d-e51061bcb9de",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "NrGqwlIxgP1tQiEd",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8325841057",
+        "text": "el documento ya existe ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        -16
+      ],
+      "id": "7cc9e03c-4649-4246-baae-bde741b49a60",
+      "name": "Send a text message1",
+      "webhookId": "87fc23b5-f74e-48c6-b543-56ea15a9ab02",
+      "credentials": {
+        "telegramApi": {
+          "id": "V0RkbVYUR5yye6PI",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "documento",
+        "name": "documento",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        176
+      ],
+      "id": "1de7f1c4-b739-4615-8a78-7933436c61df",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cIBjnXUA8HlcPz3j",
+          "name": "Google Drive OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92a44f73-0d6a-4ba7-a43b-883356d4738a",
+              "name": "archivo_url",
+              "value": "={{$json[\"webViewLink\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "dccc2c82-c596-4154-bbd5-b0600d4bba6e",
+              "name": "text_document",
+              "value": "\"Documento adjunto del estudiante para validación\"",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        176
+      ],
+      "id": "06545942-1351-46dc-ac86-e591e100dc4c",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ctQHgCk0BPQAuM1dnLW7Ja0hs_OTEAUYPvPlV7E15xM",
+          "mode": "list",
+          "cachedResultName": "examen n8n d1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ctQHgCk0BPQAuM1dnLW7Ja0hs_OTEAUYPvPlV7E15xM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qfVgMVn2HzYOkihKItjESG8nXGdIyEaKaCk90LvdN_E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ $('On form submission').item.json.nombre }}",
+            "correo": "={{ $('On form submission').item.json.correo }}",
+            "motivo": "={{ $('On form submission').item.json.motivo }}",
+            "descripcion": "={{ $('On form submission').item.json.descripcion }}",
+            "enlace document": "={{ $json.owners[0].photoLink }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "correo",
+              "displayName": "correo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "descripcion",
+              "displayName": "descripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "enlace document",
+              "displayName": "enlace document",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -736,
+        256
+      ],
+      "id": "c74695fd-9498-4c1a-8c52-573ea36e496b",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "C10N0QyqERODNjVf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8279394d-f683-4d68-b811-085f8704097f",
+  "meta": {
+    "templateId": "ready-to-run-ai-workflow-v5",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae016dc74d3a030edae0c6490d10932b11a18cedbf643e1c25b0ae73c98660b6"
+  },
+  "id": "VAAxnhKUNqWhcmUj",
+  "tags": []
+}
